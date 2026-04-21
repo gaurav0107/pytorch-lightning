@@ -36,6 +36,26 @@ def test_get_available_flops(xla_available):
         flops = get_available_flops(torch.device("cuda"), torch.bfloat16)
     assert flops == 756e12
 
+    # Verify corrected dense (without sparsity) per-GPU values for H200 and H100 NVL
+    with mock.patch("torch.cuda.get_device_name", return_value="NVIDIA H200 SXM1"):
+        assert get_available_flops(torch.device("cuda"), torch.float64) == 3.4e13
+        assert get_available_flops(torch.device("cuda"), torch.bfloat16) == 989.5e12
+        assert get_available_flops(torch.device("cuda"), torch.float16) == 989.5e12
+        assert get_available_flops(torch.device("cuda"), "tfloat32") == 494.5e12
+        assert get_available_flops(torch.device("cuda"), torch.int8) == 1979e12
+    with mock.patch("torch.cuda.get_device_name", return_value="NVIDIA H200 NVL1"):
+        assert get_available_flops(torch.device("cuda"), torch.float64) == 3.0e13
+        assert get_available_flops(torch.device("cuda"), torch.bfloat16) == 835.5e12
+        assert get_available_flops(torch.device("cuda"), torch.float16) == 835.5e12
+        assert get_available_flops(torch.device("cuda"), "tfloat32") == 417.5e12
+        assert get_available_flops(torch.device("cuda"), torch.int8) == 1670.5e12
+    with mock.patch("torch.cuda.get_device_name", return_value="NVIDIA H100 NVL"):
+        assert get_available_flops(torch.device("cuda"), torch.float64) == 30e12
+        assert get_available_flops(torch.device("cuda"), torch.bfloat16) == 835.5e12
+        assert get_available_flops(torch.device("cuda"), torch.float16) == 835.5e12
+        assert get_available_flops(torch.device("cuda"), "tfloat32") == 417.5e12
+        assert get_available_flops(torch.device("cuda"), torch.int8) == 1670.5e12
+
     with pytest.warns(match="not found for 'CocoNut"), mock.patch("torch.cuda.get_device_name", return_value="CocoNut"):
         assert get_available_flops(torch.device("cuda"), torch.bfloat16) is None
 

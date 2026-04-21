@@ -20,7 +20,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
--
+- Fixed inconsistent GPU FLOPs in `_CUDA_FLOPS`: standardized H200 SXM1, H200 NVL1, and H100 NVL entries to dense (without sparsity) per-GPU values ([#21677](https://github.com/Lightning-AI/pytorch-lightning/issues/21677))
 
 --
 

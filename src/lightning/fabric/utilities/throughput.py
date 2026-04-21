@@ -303,32 +303,39 @@ def measure_flops(
 
 
 _CUDA_FLOPS: dict[str, dict[Union[str, torch.dtype], float]] = {
+    # All Tensor Core values use dense (without structured sparsity) per-GPU FLOPs.
+    # NVIDIA product pages often show "with sparsity" values (2x dense). This dict uses
+    # the "without sparsity" convention, matching the original H100 SXM/PCIe datasheet values.
+    #
     # Hopper
     # source: https://nvdam.widen.net/s/nb5zzzsjdf/hpc-datasheet-sc23-h200-datasheet-3002446
+    # H200 product page values are "with sparsity"; entries below are halved to "without sparsity".
     "h200 sxm1": {
         torch.float64: 3.4e13,
         torch.float32: 6.7e13,
-        "tfloat32": 9.9e14,
-        torch.bfloat16: 2.0e15,
-        torch.float16: 2.0e15,
-        torch.int8: 4.0e15,
+        "tfloat32": 494.5e12,
+        torch.bfloat16: 989.5e12,
+        torch.float16: 989.5e12,
+        torch.int8: 1979e12,
     },
     "h200 nvl1": {
         torch.float64: 3.0e13,
         torch.float32: 6.0e13,
-        "tfloat32": 8.4e14,
-        torch.bfloat16: 1.7e15,
-        torch.float16: 1.7e15,
-        torch.int8: 3.3e15,
+        "tfloat32": 417.5e12,
+        torch.bfloat16: 835.5e12,
+        torch.float16: 835.5e12,
+        torch.int8: 1670.5e12,
     },
-    # source: https://resources.nvidia.com/en-us-tensor-core
+    # source: https://www.nvidia.com/en-us/data-center/h100/
+    # Old values used H100 SXM specs × 2 instead of actual H100 NVL per-GPU specs.
+    # Tensor Core values halved from product page "with sparsity" to "without sparsity".
     "h100 nvl": {
-        torch.float64: 67e12,
-        torch.float32: 133.8e12,
-        "tfloat32": 989.4e12,
-        torch.bfloat16: 1978.8e12,
-        torch.float16: 1978.8e12,
-        torch.int8: 3957.8e12,
+        torch.float64: 30e12,
+        torch.float32: 60e12,
+        "tfloat32": 417.5e12,
+        torch.bfloat16: 835.5e12,
+        torch.float16: 835.5e12,
+        torch.int8: 1670.5e12,
     },
     "h100 sxm": {
         torch.float64: 33.5e12,
